@@ -1,26 +1,21 @@
-use std::io;
+use std::io::{self, Write};
 
 fn main() -> io::Result<()> {
-    eprintln!("starting plugin");
+    eprintln!("plugin: starting");
 
-    let mut buffer = String::new();
     let mut ok = true;
     while ok {
+        let mut buffer = String::new();
         let bytes_read = io::stdin().read_line(&mut buffer)?;
         if bytes_read == 0 {
             ok = false;
             continue;
         }
-        let line = buffer.trim();
-        if bytes_read == 0 || line == "EXIT" {
-            ok = false;
-            continue;
-        }
-        eprintln!("received and echoing \"{}\"", line);
-        println!("{}", line);
+        eprintln!("plugin: received and echoing \"{}\"", buffer.trim());
+        io::stdout().write_all(buffer.as_bytes())?;
     }
 
-    eprintln!("plugin exiting");
+    eprintln!("plugin: exiting");
 
     Ok(())
 }

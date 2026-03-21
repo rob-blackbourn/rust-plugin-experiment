@@ -1,4 +1,4 @@
-use std::io::{self, Read, Write};
+use std::io::{self, BufRead, BufReader, Write};
 use std::process::{Command, Stdio};
 
 fn main() -> io::Result<()> {
@@ -6,33 +6,32 @@ fn main() -> io::Result<()> {
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .spawn()
-        .expect("should start plugin");
+        .expect("service: should start plugin");
 
-    let mut plugin_stdin = plugin.stdin.take().expect("should open plugin stdin");
-    let mut plugin_stdout = plugin.stdout.take().expect("should open plugin stdout");
+    let mut plugin_stdin = plugin.stdin.take().expect("service: should open plugin stdin");
+    let plugin_stdout = plugin.stdout.take().expect("service: should open plugin stdout");
+    let mut plugin_reader = BufReader::with_capacity(1,plugin_stdout);
 
-
-    let mut buffer = String::new();
     let mut ok = true;
     while ok {
-        println!("Type \"EXIT\" to quit");
-        let bytes_read = io::stdin().read_line(&mut buffer)?;
+        println!("service: enter CTRL-D to quit");
+
+        let mut input_buffer = String::new();
+        let bytes_read = io::stdin().read_line(&mut input_buffer)?;
         if bytes_read == 0 {
             ok = false;
             continue;
         }
-        let line = buffer.trim();
-        if bytes_read == 0 || line == "EXIT" {
-            ok = false;
-            continue;
-        }
-        println!("line: \"{}\"", line);
-        plugin_stdin.write(buffer.as_bytes())?;
-        plugin_stdout.read_to_string(&mut buffer)?;
-        println!("Received: {}", buffer);
+
+        println!("service: sending \"{}\"", input_buffer.trim());
+        plugin_stdin.write(input_buffer.as_bytes())?;
+
+        let mut plugin_buffer = String::new();
+        plugin_reader.read_line(&mut plugin_buffer)?;
+        println!("service: received: {}", plugin_buffer.trim());
     }
 
-    println!("Existed normally");
+    println!("service: existed normally");
 
     Ok(())
 }
