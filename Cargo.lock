@@ -3,9 +3,9 @@
 version = 4
 
 [[package]]
-name = "example-plugin"
+name = "a-plugin"
 version = "0.1.0"
 
 [[package]]
-name = "example-service"
+name = "a-service"
 version = "0.1.0"

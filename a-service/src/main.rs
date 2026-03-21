@@ -2,7 +2,7 @@ use std::io::{self, BufRead, BufReader, Write};
 use std::process::{Command, Stdio};
 
 fn main() -> io::Result<()> {
-    let mut plugin = Command::new("./example-plugin")
+    let mut plugin = Command::new("./a-plugin")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .spawn()
