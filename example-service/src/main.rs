@@ -10,7 +10,7 @@ fn main() -> io::Result<()> {
 
     let mut plugin_stdin = plugin.stdin.take().expect("service: should open plugin stdin");
     let plugin_stdout = plugin.stdout.take().expect("service: should open plugin stdout");
-    let mut plugin_reader = BufReader::with_capacity(1,plugin_stdout);
+    let mut plugin_reader = BufReader::new(plugin_stdout);
 
     let mut ok = true;
     while ok {
