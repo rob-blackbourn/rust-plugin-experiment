@@ -9,3 +9,11 @@ version = "0.1.0"
 [[package]]
 name = "a-service"
 version = "0.1.0"
+
+[[package]]
+name = "b-plugin"
+version = "0.1.0"
+
+[[package]]
+name = "b-service"
+version = "0.1.0"

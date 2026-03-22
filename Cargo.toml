@@ -1,3 +1,6 @@
 [workspace]
 resolver = "2"
-members = [ "a-service", "a-plugin" ]
+members = [
+    "a-service", "a-plugin",
+    "b-service", "b-plugin",
+]

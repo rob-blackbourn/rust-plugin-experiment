@@ -1,0 +1,108 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Cargo: a-service",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "run",
+                    "--bin=a-service",
+                    "--package=a-service"
+                ]
+            },
+            "args": []
+        },
+        {
+            "name": "Cargo test: a-service",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--bin=a-service",
+                    "--package=a-service"
+                ]
+            }
+        },
+        {
+            "name": "Cargo: a-plugins",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "run",
+                    "--bin=a-plugin",
+                    "--package=a-plugin"
+                ]
+            },
+            "args": []
+        },
+        {
+            "name": "Cargo test: a-plugin",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--bin=a-plugin",
+                    "--package=a-plugin"
+                ]
+            }
+        },
+        {
+            "name": "Cargo: b-service",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "run",
+                    "--bin=b-service",
+                    "--package=b-service"
+                ]
+            },
+            "args": []
+        },
+        {
+            "name": "Cargo test: b-service",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--bin=b-service",
+                    "--package=b-service"
+                ]
+            }
+        },
+        {
+            "name": "Cargo: b-plugin",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "run",
+                    "--bin=b-plugin",
+                    "--package=b-plugin"
+                ]
+            },
+            "args": []
+        },
+        {
+            "name": "Cargo test: b-plugin",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--bin=b-plugin",
+                    "--package=b-plugin"
+                ]
+            }
+        }
+    ]
+}
