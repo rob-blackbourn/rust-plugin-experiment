@@ -54,6 +54,7 @@
                 ]
             }
         },
+        
         {
             "name": "Cargo: b-service",
             "type": "lldb",
@@ -101,6 +102,57 @@
                     "test",
                     "--bin=b-plugin",
                     "--package=b-plugin"
+                ]
+            }
+        },
+        
+        {
+            "name": "Cargo: c-service",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "run",
+                    "--bin=c-service",
+                    "--package=c-service"
+                ]
+            },
+            "args": []
+        },
+        {
+            "name": "Cargo test: c-service",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--bin=c-service",
+                    "--package=c-service"
+                ]
+            }
+        },
+        {
+            "name": "Cargo: c-plugin",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "run",
+                    "--bin=c-plugin",
+                    "--package=c-plugin"
+                ]
+            },
+            "args": []
+        },
+        {
+            "name": "Cargo test: c-plugin",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--bin=c-plugin",
+                    "--package=c-plugin"
                 ]
             }
         }
