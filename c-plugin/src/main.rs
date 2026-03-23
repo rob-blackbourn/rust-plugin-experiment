@@ -1,7 +1,9 @@
 use std::io::{self, Write};
 
 fn main() -> io::Result<()> {
-    eprintln!("plugin: starting");
+
+    let args: Vec<String> = std::env::args().collect();
+    eprintln!("plugin: starting. args={args:#?}");
 
     let mut ok = true;
     while ok {

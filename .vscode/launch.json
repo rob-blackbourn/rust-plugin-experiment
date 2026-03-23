@@ -114,7 +114,10 @@
                 "args": [
                     "run",
                     "--bin=c-service",
-                    "--package=c-service"
+                    "--package=c-service",
+                    "--",
+                    "--plugin-path", "${workspaceFolder}/target/debug",
+                    "--plugin-cmdline", "--filename foo --is-happy"
                 ]
             },
             "args": []
