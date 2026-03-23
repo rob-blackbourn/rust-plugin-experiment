@@ -3,6 +3,9 @@ use std::io::{self, BufRead, BufReader, Write};
 use std::path::Path;
 use std::process::{Command, Stdio};
 
+mod args;
+use args::Args;
+
 fn add_plugin_path(path: &Path) -> () {
     let key = "PATH";
     match env::var_os(key) {
@@ -20,16 +23,13 @@ fn add_plugin_path(path: &Path) -> () {
     }
 }
 
-fn add_current_exe_dir_to_path() -> () {
-    let mut path = env::current_exe().expect("should find exe dir");
-    path.pop();
-    add_plugin_path(path.as_path());
-}
-
 fn main() -> io::Result<()> {
-    add_current_exe_dir_to_path();
+    let args = Args::load()?;
+
+    add_plugin_path(&args.plugin_path);
 
     let mut plugin = Command::new("c-plugin")
+        .args(args.plugin_cmdline)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .spawn()
