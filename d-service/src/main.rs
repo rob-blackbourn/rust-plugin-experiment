@@ -6,7 +6,7 @@ use std::process::{Command, Stdio};
 mod args;
 use args::Args;
 
-fn add_plugin_path(path: &Path) -> () {
+fn add_plugin_path(path: &str) -> () {
     let key = "PATH";
     match env::var_os(key) {
         Some(path_var) => {
@@ -18,8 +18,8 @@ fn add_plugin_path(path: &Path) -> () {
             }
         }
         None => {
-            let paths: Vec<&Path> = vec![path];
-            let path_var = env::join_paths(paths).expect("should join path");
+            let paths = vec![Path::new(path)];
+            let path_var = env::join_paths(paths.iter()).expect("should join path");
             unsafe {
                 env::set_var(key, &path_var);
             }

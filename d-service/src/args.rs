@@ -1,10 +1,9 @@
 use std::env;
 use std::io;
-use std::path::PathBuf;
 
 pub struct Args {
-    pub plugin_path: PathBuf,
-    pub plugin_cmdline: Vec<String>
+    pub plugin_path: String,
+    pub plugin_cmdline: Vec<String>,
 }
 
 fn fetch_arg(arg_name: &str, args: &[String], arg_index: &mut usize) -> io::Result<String> {
@@ -20,10 +19,10 @@ fn fetch_arg(arg_name: &str, args: &[String], arg_index: &mut usize) -> io::Resu
     Ok(arg.clone())
 }
 
-fn current_exe_dir() -> PathBuf {
+fn current_exe_dir<'a>() -> String {
     let mut path = env::current_exe().expect("should find exe dir");
     path.pop();
-    path
+    String::from(path.to_string_lossy())
 }
 
 fn check_fetch_arg<T>(
@@ -44,7 +43,7 @@ fn check_fetch_arg<T>(
 
 impl Args {
     pub fn parse(args: &[String]) -> io::Result<Self> {
-        let mut plugin_path: Option<PathBuf> = None;
+        let mut plugin_path: Option<String> = None;
         let mut plugin_cmdline: Option<Vec<String>> = None;
 
         let mut arg_index = 1;
@@ -52,16 +51,17 @@ impl Args {
             let arg_name = args.get(arg_index).unwrap().as_str();
             match arg_name {
                 "--plugin-path" => {
-                    let arg =
-                        check_fetch_arg(arg_name, &plugin_path, &args, &mut arg_index)?;
-                    plugin_path = Some(PathBuf::from(arg));
+                    let arg = check_fetch_arg(arg_name, &plugin_path, &args, &mut arg_index)?;
+                    plugin_path = Some(arg);
                 }
                 "--plugin-cmdline" => {
-                    let arg =
-                        check_fetch_arg(arg_name, &plugin_cmdline, &args, &mut arg_index)?;
+                    let arg = check_fetch_arg(arg_name, &plugin_cmdline, &args, &mut arg_index)?;
                     match shell_words::split(arg.as_str()) {
                         Ok(cmdline) => plugin_cmdline = Some(cmdline),
-                        Err(_) => Err(io::Error::new(io::ErrorKind::Other, "invalid plugin cmdline"))?
+                        Err(_) => Err(io::Error::new(
+                            io::ErrorKind::Other,
+                            "invalid plugin cmdline",
+                        ))?,
                     }
                 }
                 "--help" => Err(io::Error::new(
@@ -77,12 +77,8 @@ impl Args {
             arg_index += 1
         }
 
-        let plugin_path = plugin_path
-            .or(Some(current_exe_dir()))
-            .unwrap();
-        let plugin_cmdline = plugin_cmdline
-            .or(Some(Vec::new()))
-            .unwrap();
+        let plugin_path = plugin_path.or(Some(current_exe_dir())).unwrap();
+        let plugin_cmdline = plugin_cmdline.or(Some(Vec::new())).unwrap();
 
         return Ok(Self {
             plugin_path,
@@ -114,5 +110,4 @@ impl Args {
             }
         }
     }
-
 }
