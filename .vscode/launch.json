@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Cargo: a-service",
+            "name": "a-service",
             "type": "lldb",
             "request": "launch",
             "cargo": {
@@ -16,47 +16,9 @@
                 ]
             },
             "args": []
-        },
+        },        
         {
-            "name": "Cargo test: a-service",
-            "type": "lldb",
-            "request": "launch",
-            "cargo": {
-                "args": [
-                    "test",
-                    "--bin=a-service",
-                    "--package=a-service"
-                ]
-            }
-        },
-        {
-            "name": "Cargo: a-plugins",
-            "type": "lldb",
-            "request": "launch",
-            "cargo": {
-                "args": [
-                    "run",
-                    "--bin=a-plugin",
-                    "--package=a-plugin"
-                ]
-            },
-            "args": []
-        },
-        {
-            "name": "Cargo test: a-plugin",
-            "type": "lldb",
-            "request": "launch",
-            "cargo": {
-                "args": [
-                    "test",
-                    "--bin=a-plugin",
-                    "--package=a-plugin"
-                ]
-            }
-        },
-        
-        {
-            "name": "Cargo: b-service",
+            "name": "b-service",
             "type": "lldb",
             "request": "launch",
             "cargo": {
@@ -69,45 +31,7 @@
             "args": []
         },
         {
-            "name": "Cargo test: b-service",
-            "type": "lldb",
-            "request": "launch",
-            "cargo": {
-                "args": [
-                    "test",
-                    "--bin=b-service",
-                    "--package=b-service"
-                ]
-            }
-        },
-        {
-            "name": "Cargo: b-plugin",
-            "type": "lldb",
-            "request": "launch",
-            "cargo": {
-                "args": [
-                    "run",
-                    "--bin=b-plugin",
-                    "--package=b-plugin"
-                ]
-            },
-            "args": []
-        },
-        {
-            "name": "Cargo test: b-plugin",
-            "type": "lldb",
-            "request": "launch",
-            "cargo": {
-                "args": [
-                    "test",
-                    "--bin=b-plugin",
-                    "--package=b-plugin"
-                ]
-            }
-        },
-        
-        {
-            "name": "Cargo: c-service",
+            "name": "c-service",
             "type": "lldb",
             "request": "launch",
             "cargo": {
@@ -121,43 +45,6 @@
                 ]
             },
             "args": []
-        },
-        {
-            "name": "Cargo test: c-service",
-            "type": "lldb",
-            "request": "launch",
-            "cargo": {
-                "args": [
-                    "test",
-                    "--bin=c-service",
-                    "--package=c-service"
-                ]
-            }
-        },
-        {
-            "name": "Cargo: c-plugin",
-            "type": "lldb",
-            "request": "launch",
-            "cargo": {
-                "args": [
-                    "run",
-                    "--bin=c-plugin",
-                    "--package=c-plugin"
-                ]
-            },
-            "args": []
-        },
-        {
-            "name": "Cargo test: c-plugin",
-            "type": "lldb",
-            "request": "launch",
-            "cargo": {
-                "args": [
-                    "test",
-                    "--bin=c-plugin",
-                    "--package=c-plugin"
-                ]
-            }
         }
     ]
 }
