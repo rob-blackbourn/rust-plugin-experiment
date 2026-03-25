@@ -8,27 +8,30 @@ use args::Args;
 mod authenticator;
 use authenticator::HtpasswdAuthenticator;
 
+fn read_credentials() -> io::Result<Credentials> {
+    let mut buffer = String::new();
+    let bytes_read = io::stdin().read_line(&mut buffer)?;
+    if bytes_read == 0 {
+        return Err(io::Error::new(io::ErrorKind::Other, "eof"));
+    }
+    let credentials: Credentials = serde_json::from_str(&buffer)?;
+    Ok(credentials)
+}
+
+fn write_status(status: Status) -> io::Result<()> {
+    let text = serde_json::to_string(&status)?;
+    io::stdout().write_all(text.as_bytes())?;
+    io::stdout().write_all(b"\n")?;
+    Ok(())
+}
+
 fn main() -> io::Result<()> {
     let args = Args::load()?;
     let authenticator = HtpasswdAuthenticator::new(&args.password_file)?;
 
-    let mut ok = true;
-    while ok {
-        let mut buffer = String::new();
-        let bytes_read = io::stdin().read_line(&mut buffer)?;
-        if bytes_read == 0 {
-            ok = false;
-            continue;
-        }
-        let credentials: Credentials = serde_json::from_str(&buffer)?;
-
-        let status = Status {
-            ok: authenticator.check(&credentials.username, &credentials.password),
-        };
-        let text = serde_json::to_string(&status)?;
-        io::stdout().write_all(text.as_bytes())?;
-        io::stdout().write_all(b"\n")?;
+    loop {
+        let credentials = read_credentials()?;
+        let ok = authenticator.check(&credentials.username, &credentials.password);
+        write_status(Status { ok })?;
     }
-
-    Ok(())
 }
