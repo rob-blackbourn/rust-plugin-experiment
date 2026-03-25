@@ -38,7 +38,6 @@ path.
 cargo run --bin=b-service --package=b-service
 ```
 
-
 ### Experiment c
 
 This experiment introduces configuration. The service takes two command line
@@ -49,6 +48,12 @@ line to the plugin.
 The plugin command line must be passed as a vector of args (as if they were
 provided by the shell). To do this it uses the
 [shell-words](https://github.com/tmiasko/shell-words) package.
+
+```bash
+cargo run --bin=c-service --package=c-service -- \
+    --plugin-path $(pwd)/target/debug \
+    --plugin-cmdline  "--filename foo --is-happy
+```
 
 # Experiment d
 
