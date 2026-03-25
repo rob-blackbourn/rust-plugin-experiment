@@ -1,4 +1,4 @@
-use std::io::{self, BufRead, Write};
+use std::io;
 
 mod args;
 use args::Args;
@@ -7,7 +7,7 @@ mod plugin;
 use plugin::Plugin;
 
 mod utils;
-use utils::{add_plugin_path, read_stdin};
+use utils::{add_plugin_path, read_stdin, receive_from_plugin, send_to_plugin};
 
 fn main() -> io::Result<()> {
     let args = Args::load()?;
@@ -24,11 +24,10 @@ fn main() -> io::Result<()> {
         };
 
         println!("service: sending \"{}\"", line.trim());
-        plugin.stdin.write(line.as_bytes())?;
+        send_to_plugin(&mut plugin.stdin, &line)?;
 
-        let mut plugin_buffer = String::new();
-        plugin.reader.read_line(&mut plugin_buffer)?;
-        println!("service: received: {}", plugin_buffer.trim());
+        let response = receive_from_plugin(&mut plugin.reader)?;
+        println!("service: received: {}", response.trim());
     }
 
     println!("service: existed normally");

@@ -1,5 +1,4 @@
-use std::io::BufReader;
-use std::io::{self, BufRead, Write};
+use std::io::{self, BufRead, BufReader, Write};
 use std::process::{ChildStdin, ChildStdout};
 
 pub fn read_stdin() -> io::Result<Option<String>> {

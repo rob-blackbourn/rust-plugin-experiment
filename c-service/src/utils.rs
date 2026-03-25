@@ -1,6 +1,8 @@
 use std::env;
-use std::io;
+use std::io::{self, BufRead, BufReader, Write};
 use std::path::Path;
+use std::process::ChildStdin;
+use std::process::ChildStdout;
 
 pub fn read_stdin() -> io::Result<Option<String>> {
     let mut line = String::new();
@@ -31,4 +33,15 @@ pub fn add_plugin_path(path: &str) -> () {
             }
         }
     }
+}
+
+pub fn send_to_plugin(stdin: &mut ChildStdin, line: &str) -> io::Result<()> {
+    stdin.write(line.as_bytes())?;
+    Ok(())
+}
+
+pub fn receive_from_plugin(reader: &mut BufReader<ChildStdout>) -> io::Result<String> {
+    let mut line = String::new();
+    reader.read_line(&mut line)?;
+    Ok(line)
 }
