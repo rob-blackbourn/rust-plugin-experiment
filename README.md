@@ -15,7 +15,7 @@ stdin/stdout.
 
 A service spawns a plugin in a new process.
 
-The service receives lines from the terminal, sand sends them to the plugin.
+The service receives lines from the terminal, and sends them to the plugin.
 The plugin reads lines from stdin and echoes them to stdout. The service
 reads lines from the stdout of the plugin, and sends them to stdout.
 
