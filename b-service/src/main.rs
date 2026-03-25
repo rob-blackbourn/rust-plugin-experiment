@@ -5,6 +5,9 @@ use std::path::Path;
 mod plugin;
 use plugin::Plugin;
 
+mod utils;
+use utils::read_stdin;
+
 fn main() -> io::Result<()> {
     add_current_exe_dir_to_path();
 
@@ -54,14 +57,4 @@ fn add_current_exe_dir_to_path() -> () {
     let mut path = env::current_exe().expect("should find exe dir");
     path.pop();
     add_plugin_path(path.as_path());
-}
-
-fn read_stdin() -> io::Result<Option<String>> {
-    let mut line = String::new();
-    let bytes_read = io::stdin().read_line(&mut line)?;
-    if bytes_read == 0 {
-        Ok(None)
-    } else {
-        Ok(Some(line))
-    }
 }
