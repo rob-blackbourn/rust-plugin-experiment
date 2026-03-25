@@ -43,10 +43,9 @@ cargo run --bin=b-service --package=b-service
 
 ### Experiment c
 
-This experiment introduces configuration. The service takes two command line
-arguments: `--plugin-path` and `--plugin-cmdline`. It adds the plugin path to
-the environment before launching the plugin, and passes the provided command
-line to the plugin.
+This experiment introduces configuration through command line arguments.
+The service takes two command line arguments: `--plugin-path` and `--plugin-cmdline`.
+It adds the plugin path to the environment before launching the plugin, and passes the provided command line to the plugin.
 
 The plugin command line must be passed as a vector of args (as if they were
 provided by the shell). To do this it uses the
