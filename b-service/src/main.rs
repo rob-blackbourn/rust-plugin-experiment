@@ -1,7 +1,9 @@
 use std::env;
-use std::io::{self, BufRead, BufReader, Write};
+use std::io::{self, BufRead, Write};
 use std::path::Path;
-use std::process::{ChildStdin, ChildStdout, Command, Stdio};
+
+mod plugin;
+use plugin::Plugin;
 
 fn main() -> io::Result<()> {
     add_current_exe_dir_to_path();
@@ -61,32 +63,5 @@ fn read_stdin() -> io::Result<Option<String>> {
         Ok(None)
     } else {
         Ok(Some(line))
-    }
-}
-
-struct Plugin {
-    stdin: ChildStdin,
-    reader: BufReader<ChildStdout>,
-}
-
-impl Plugin {
-    pub fn new() -> Self {
-        let mut child = Command::new("b-plugin")
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .spawn()
-            .expect("service: should start plugin");
-
-        let stdin = child
-            .stdin
-            .take()
-            .expect("service: should open plugin stdin");
-        let stdout = child
-            .stdout
-            .take()
-            .expect("service: should open plugin stdout");
-        let reader = BufReader::new(stdout);
-
-        Self { stdin, reader }
     }
 }
