@@ -4,5 +4,5 @@ members = [
     "a-service", "a-plugin",
     "b-service", "b-plugin",
     "c-service", "c-plugin",
-    "d-service", "d-plugin",
+    "d-service", "d-plugin", "d-common",
 ]

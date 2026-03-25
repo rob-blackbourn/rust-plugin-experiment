@@ -18,6 +18,8 @@
         "editor.formatOnSave": true
     },
     "cSpell.words": [
-        "cmdline"
+        "cmdline",
+        "htpasswd",
+        "serde"
     ]
 }

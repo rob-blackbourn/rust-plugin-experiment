@@ -45,6 +45,22 @@
                 ]
             },
             "args": []
+        },
+        {
+            "name": "d-service",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "run",
+                    "--bin=d-service",
+                    "--package=d-service",
+                    "--",
+                    "--plugin-path", "${workspaceFolder}/target/debug",
+                    "--plugin-cmdline", "--password-file ${workspaceFolder}/d-etc/ht.passwd"
+                ]
+            },
+            "args": []
         }
     ]
 }

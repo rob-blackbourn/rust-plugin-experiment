@@ -53,15 +53,33 @@ fn main() -> io::Result<()> {
     while ok {
         println!("service: enter CTRL-D to quit");
 
-        let mut input_buffer = String::new();
-        let bytes_read = io::stdin().read_line(&mut input_buffer)?;
+        print!("username: ");
+        io::stdout().flush()?;
+        let mut username = String::new();
+        let bytes_read = io::stdin().read_line(&mut username)?;
         if bytes_read == 0 {
             ok = false;
             continue;
         }
 
-        println!("service: sending \"{}\"", input_buffer.trim());
-        plugin_stdin.write(input_buffer.as_bytes())?;
+        print!("password: ");
+        io::stdout().flush()?;
+        let mut password = String::new();
+        let bytes_read = io::stdin().read_line(&mut password)?;
+        if bytes_read == 0 {
+            ok = false;
+            continue;
+        }
+
+        let credentials = d_common::Credentials {
+            username: username.trim().to_string(),
+            password: password.trim().to_string(),
+        };
+        let text = serde_json::to_string(&credentials)?;
+
+        println!("service: sending \"{}\"", text);
+        plugin_stdin.write(text.as_bytes())?;
+        plugin_stdin.write(b"\n")?;
 
         let mut plugin_buffer = String::new();
         plugin_reader.read_line(&mut plugin_buffer)?;

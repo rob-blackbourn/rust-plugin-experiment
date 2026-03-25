@@ -1,8 +1,17 @@
 use std::io::{self, Write};
 
-fn main() -> io::Result<()> {
+use d_common::{Credentials, Status};
 
-    let args: Vec<String> = std::env::args().collect();
+mod args;
+use args::Args;
+
+mod authenticator;
+use authenticator::HtpasswdAuthenticator;
+
+fn main() -> io::Result<()> {
+    let args = Args::load()?;
+    let authenticator = HtpasswdAuthenticator::new(&args.password_file)?;
+
     eprintln!("plugin: starting. args={args:#?}");
 
     let mut ok = true;
@@ -13,8 +22,17 @@ fn main() -> io::Result<()> {
             ok = false;
             continue;
         }
-        eprintln!("plugin: received and echoing \"{}\"", buffer.trim());
-        io::stdout().write_all(buffer.as_bytes())?;
+        eprintln!("plugin: received \"{}\"", buffer.trim());
+        let credentials: Credentials = serde_json::from_str(buffer.as_str())?;
+
+        let status = Status {
+            ok: authenticator.check(&credentials.username, &credentials.password),
+        };
+        let text = serde_json::to_string(&status)?;
+
+        eprintln!("plugin: sending \"{}\"", text);
+        io::stdout().write_all(text.as_bytes())?;
+        io::stdout().write_all(b"\n")?;
     }
 
     eprintln!("plugin: exiting");
