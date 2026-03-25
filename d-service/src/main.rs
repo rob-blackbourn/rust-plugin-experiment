@@ -1,12 +1,15 @@
 use std::env;
 use std::io::{self, BufRead, BufReader, Write};
 use std::path::Path;
-use std::process::{Command, Stdio};
+use std::process::{Child, ChildStdin, ChildStdout, Command, Stdio};
 
 use d_common::{Credentials, Status};
 
 mod args;
 use args::Args;
+
+mod plugin;
+use plugin::Plugin;
 
 fn add_plugin_path(path: &str) -> () {
     let key = "PATH";
@@ -45,22 +48,7 @@ fn main() -> io::Result<()> {
 
     add_plugin_path(&args.plugin_path);
 
-    let mut plugin = Command::new("d-plugin")
-        .args(args.plugin_cmdline)
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("service: should start plugin");
-
-    let mut plugin_stdin = plugin
-        .stdin
-        .take()
-        .expect("service: should open plugin stdin");
-    let plugin_stdout = plugin
-        .stdout
-        .take()
-        .expect("service: should open plugin stdout");
-    let mut plugin_reader = BufReader::new(plugin_stdout);
+    let mut plugin = Plugin::new(args.plugin_cmdline);
 
     let username = input("username: ")?;
     let password = input("password: ")?;
@@ -71,11 +59,11 @@ fn main() -> io::Result<()> {
     };
     let text = serde_json::to_string(&credentials)?;
 
-    plugin_stdin.write(text.as_bytes())?;
-    plugin_stdin.write(b"\n")?;
+    plugin.stdin.write(text.as_bytes())?;
+    plugin.stdin.write(b"\n")?;
 
     let mut plugin_buffer = String::new();
-    plugin_reader.read_line(&mut plugin_buffer)?;
+    plugin.reader.read_line(&mut plugin_buffer)?;
     let status: Status = serde_json::from_str(&plugin_buffer)?;
     match status.ok {
         true => println!("service: authenticated"),
