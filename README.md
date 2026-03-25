@@ -31,8 +31,8 @@ cd target/debug
 ### Experiment b
 
 This experiment solves the issue in *experiment a* whereby the plugin must have
-an absolute path by discovering the folder the service was run from, and adding
-it to the path.
+an absolute path by discovering the folder from which the service was run from,
+and adding it to the path.
 
 ```bash
 cargo run --bin=b-service --package=b-service
