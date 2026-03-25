@@ -39,3 +39,21 @@ line to the plugin.
 The plugin command line must be passed as a vector of args (as if they were
 provided by the shell). To do this it uses the
 [shell-words](https://github.com/tmiasko/shell-words) package.
+
+# Experiment d
+
+This experiment brings all the elements together in creating an authentication
+plugin.
+
+The plugin takes the argument `--password-file <file>` which specifies the
+location of a password file created using the `htpasswd` utility. There is an
+example file in `d-etc/ht.passwd` with the user names: "tom", "dick" and "harry".
+The password is the user name (so the password to "tom" is "tom").
+
+The service and plugin communicate using JSON messages.
+
+```bash
+cargo run --bin=d-service --package=d-service -- \
+    --plugin-path $(pwd)/target/debug \
+    --plugin-cmdline "--password-file $(pwd)/d-etc/ht.passwd"
+```

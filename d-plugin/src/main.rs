@@ -8,14 +8,14 @@ use args::Args;
 mod authenticator;
 use authenticator::HtpasswdAuthenticator;
 
-fn read_credentials() -> io::Result<Credentials> {
+fn read_credentials() -> io::Result<Option<Credentials>> {
     let mut buffer = String::new();
     let bytes_read = io::stdin().read_line(&mut buffer)?;
     if bytes_read == 0 {
-        return Err(io::Error::new(io::ErrorKind::Other, "eof"));
+        return Ok(None);
     }
     let credentials: Credentials = serde_json::from_str(&buffer)?;
-    Ok(credentials)
+    Ok(Some(credentials))
 }
 
 fn write_status(status: Status) -> io::Result<()> {
@@ -30,8 +30,14 @@ fn main() -> io::Result<()> {
     let authenticator = HtpasswdAuthenticator::new(&args.password_file)?;
 
     loop {
-        let credentials = read_credentials()?;
+        let Some(credentials) = read_credentials()? else {
+            break;
+        };
+
         let ok = authenticator.check(&credentials.username, &credentials.password);
+
         write_status(Status { ok })?;
     }
+
+    Ok(())
 }
