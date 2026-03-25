@@ -1,12 +1,12 @@
 use std::env;
-use std::io::{self, BufRead, Write};
+use std::io;
 use std::path::Path;
 
 mod plugin;
 use plugin::Plugin;
 
 mod utils;
-use utils::read_stdin;
+use utils::{read_stdin, receive_from_plugin, send_to_plugin};
 
 fn main() -> io::Result<()> {
     add_current_exe_dir_to_path();
@@ -21,11 +21,10 @@ fn main() -> io::Result<()> {
         };
 
         println!("service: sending \"{}\"", line.trim());
-        plugin.stdin.write(line.as_bytes())?;
+        send_to_plugin(&mut plugin.stdin, &line)?;
 
-        let mut plugin_buffer = String::new();
-        plugin.reader.read_line(&mut plugin_buffer)?;
-        println!("service: received: {}", plugin_buffer.trim());
+        let response = receive_from_plugin(&mut plugin.reader)?;
+        println!("service: received: {}", response.trim());
     }
 
     println!("service: existed normally");
