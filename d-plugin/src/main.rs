@@ -12,8 +12,6 @@ fn main() -> io::Result<()> {
     let args = Args::load()?;
     let authenticator = HtpasswdAuthenticator::new(&args.password_file)?;
 
-    eprintln!("plugin: starting. args={args:#?}");
-
     let mut ok = true;
     while ok {
         let mut buffer = String::new();
@@ -22,20 +20,15 @@ fn main() -> io::Result<()> {
             ok = false;
             continue;
         }
-        eprintln!("plugin: received \"{}\"", buffer.trim());
-        let credentials: Credentials = serde_json::from_str(buffer.as_str())?;
+        let credentials: Credentials = serde_json::from_str(&buffer)?;
 
         let status = Status {
             ok: authenticator.check(&credentials.username, &credentials.password),
         };
         let text = serde_json::to_string(&status)?;
-
-        eprintln!("plugin: sending \"{}\"", text);
         io::stdout().write_all(text.as_bytes())?;
         io::stdout().write_all(b"\n")?;
     }
-
-    eprintln!("plugin: exiting");
 
     Ok(())
 }

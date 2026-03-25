@@ -3,6 +3,8 @@ use std::io::{self, BufRead, BufReader, Write};
 use std::path::Path;
 use std::process::{Command, Stdio};
 
+use d_common::{Credentials, Status};
+
 mod args;
 use args::Args;
 
@@ -27,6 +29,17 @@ fn add_plugin_path(path: &str) -> () {
     }
 }
 
+fn input(prompt: &str) -> io::Result<String> {
+    print!("{}", prompt);
+    io::stdout().flush()?;
+    let mut text = String::new();
+    let bytes_read = io::stdin().read_line(&mut text)?;
+    if bytes_read == 0 {
+        return Err(io::Error::new(io::ErrorKind::Other, "Exit"));
+    }
+    Ok(text)
+}
+
 fn main() -> io::Result<()> {
     let args = Args::load()?;
 
@@ -49,44 +62,25 @@ fn main() -> io::Result<()> {
         .expect("service: should open plugin stdout");
     let mut plugin_reader = BufReader::new(plugin_stdout);
 
-    let mut ok = true;
-    while ok {
-        println!("service: enter CTRL-D to quit");
+    let username = input("username: ")?;
+    let password = input("password: ")?;
 
-        print!("username: ");
-        io::stdout().flush()?;
-        let mut username = String::new();
-        let bytes_read = io::stdin().read_line(&mut username)?;
-        if bytes_read == 0 {
-            ok = false;
-            continue;
-        }
+    let credentials = Credentials {
+        username: username.trim().to_string(),
+        password: password.trim().to_string(),
+    };
+    let text = serde_json::to_string(&credentials)?;
 
-        print!("password: ");
-        io::stdout().flush()?;
-        let mut password = String::new();
-        let bytes_read = io::stdin().read_line(&mut password)?;
-        if bytes_read == 0 {
-            ok = false;
-            continue;
-        }
+    plugin_stdin.write(text.as_bytes())?;
+    plugin_stdin.write(b"\n")?;
 
-        let credentials = d_common::Credentials {
-            username: username.trim().to_string(),
-            password: password.trim().to_string(),
-        };
-        let text = serde_json::to_string(&credentials)?;
-
-        println!("service: sending \"{}\"", text);
-        plugin_stdin.write(text.as_bytes())?;
-        plugin_stdin.write(b"\n")?;
-
-        let mut plugin_buffer = String::new();
-        plugin_reader.read_line(&mut plugin_buffer)?;
-        println!("service: received: {}", plugin_buffer.trim());
+    let mut plugin_buffer = String::new();
+    plugin_reader.read_line(&mut plugin_buffer)?;
+    let status: Status = serde_json::from_str(&plugin_buffer)?;
+    match status.ok {
+        true => println!("service: authenticated"),
+        false => println!("service: incorrect username or password"),
     }
-
-    println!("service: existed normally");
 
     Ok(())
 }
