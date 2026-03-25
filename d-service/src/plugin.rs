@@ -1,8 +1,7 @@
 use std::io::BufReader;
-use std::process::{Child, ChildStdin, ChildStdout, Command, Stdio};
+use std::process::{ChildStdin, ChildStdout, Command, Stdio};
 
 pub struct Plugin {
-    pub child: Child,
     pub stdin: ChildStdin,
     pub reader: BufReader<ChildStdout>,
 }
@@ -26,10 +25,6 @@ impl Plugin {
             .expect("service: should open plugin stdout");
         let reader = BufReader::new(stdout);
 
-        Self {
-            child,
-            stdin,
-            reader,
-        }
+        Self { stdin, reader }
     }
 }
