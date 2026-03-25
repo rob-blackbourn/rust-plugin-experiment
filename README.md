@@ -34,6 +34,9 @@ This experiment solves the issue in *experiment a* whereby the plugin must have
 an absolute path by discovering the folder from which the service was run from,
 and adding it to the path.
 
+This time we can run the service with `cargo`.
+
+
 ```bash
 cargo run --bin=b-service --package=b-service
 ```
