@@ -1,5 +1,5 @@
 use std::io::{self, BufRead, BufReader, Write};
-use std::process::{Child, ChildStdin, ChildStdout, Command, Stdio};
+use std::process::{ChildStdin, ChildStdout, Command, Stdio};
 
 fn main() -> io::Result<()> {
     let mut plugin = Plugin::new();

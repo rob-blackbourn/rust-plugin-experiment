@@ -1,10 +1,46 @@
 use std::env;
 use std::io::{self, BufRead, BufReader, Write};
 use std::path::Path;
-use std::process::{Command, Stdio};
+use std::process::{ChildStdin, ChildStdout, Command, Stdio};
 
 mod args;
 use args::Args;
+
+fn main() -> io::Result<()> {
+    let args = Args::load()?;
+
+    add_plugin_path(&args.plugin_path);
+
+    let mut plugin = Plugin::new(args.plugin_cmdline);
+
+    loop {
+        println!("service: enter CTRL-D to quit");
+        let Some(line) = read_stdin()? else {
+            break;
+        };
+
+        println!("service: sending \"{}\"", line.trim());
+        plugin.stdin.write(line.as_bytes())?;
+
+        let mut plugin_buffer = String::new();
+        plugin.reader.read_line(&mut plugin_buffer)?;
+        println!("service: received: {}", plugin_buffer.trim());
+    }
+
+    println!("service: existed normally");
+
+    Ok(())
+}
+
+fn read_stdin() -> io::Result<Option<String>> {
+    let mut line = String::new();
+    let bytes_read = io::stdin().read_line(&mut line)?;
+    if bytes_read == 0 {
+        Ok(None)
+    } else {
+        Ok(Some(line))
+    }
+}
 
 fn add_plugin_path(path: &str) -> () {
     let key = "PATH";
@@ -27,48 +63,30 @@ fn add_plugin_path(path: &str) -> () {
     }
 }
 
-fn main() -> io::Result<()> {
-    let args = Args::load()?;
+struct Plugin {
+    pub stdin: ChildStdin,
+    pub reader: BufReader<ChildStdout>,
+}
 
-    add_plugin_path(&args.plugin_path);
+impl Plugin {
+    pub fn new(cmdline: Vec<String>) -> Self {
+        let mut child = Command::new("c-plugin")
+            .args(cmdline)
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("service: should start plugin");
 
-    let mut plugin = Command::new("c-plugin")
-        .args(args.plugin_cmdline)
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("service: should start plugin");
+        let stdin = child
+            .stdin
+            .take()
+            .expect("service: should open plugin stdin");
+        let stdout = child
+            .stdout
+            .take()
+            .expect("service: should open plugin stdout");
+        let reader = BufReader::new(stdout);
 
-    let mut plugin_stdin = plugin
-        .stdin
-        .take()
-        .expect("service: should open plugin stdin");
-    let plugin_stdout = plugin
-        .stdout
-        .take()
-        .expect("service: should open plugin stdout");
-    let mut plugin_reader = BufReader::new(plugin_stdout);
-
-    let mut ok = true;
-    while ok {
-        println!("service: enter CTRL-D to quit");
-
-        let mut input_buffer = String::new();
-        let bytes_read = io::stdin().read_line(&mut input_buffer)?;
-        if bytes_read == 0 {
-            ok = false;
-            continue;
-        }
-
-        println!("service: sending \"{}\"", input_buffer.trim());
-        plugin_stdin.write(input_buffer.as_bytes())?;
-
-        let mut plugin_buffer = String::new();
-        plugin_reader.read_line(&mut plugin_buffer)?;
-        println!("service: received: {}", plugin_buffer.trim());
+        Self { stdin, reader }
     }
-
-    println!("service: existed normally");
-
-    Ok(())
 }
