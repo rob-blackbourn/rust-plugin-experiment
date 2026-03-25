@@ -10,12 +10,16 @@ fn add_plugin_path(path: &Path) -> () {
             let mut paths = env::split_paths(&path_var).collect::<Vec<_>>();
             paths.push(path.into());
             let new_path = env::join_paths(paths).expect("should join paths");
-            unsafe { env::set_var(key, &new_path); }
+            unsafe {
+                env::set_var(key, &new_path);
+            }
         }
         None => {
             let paths: Vec<&Path> = vec![path];
             let path_var = env::join_paths(paths).expect("should join path");
-            unsafe { env::set_var(key, &path_var); }
+            unsafe {
+                env::set_var(key, &path_var);
+            }
         }
     }
 }
@@ -35,8 +39,14 @@ fn main() -> io::Result<()> {
         .spawn()
         .expect("service: should start plugin");
 
-    let mut plugin_stdin = plugin.stdin.take().expect("service: should open plugin stdin");
-    let plugin_stdout = plugin.stdout.take().expect("service: should open plugin stdout");
+    let mut plugin_stdin = plugin
+        .stdin
+        .take()
+        .expect("service: should open plugin stdin");
+    let plugin_stdout = plugin
+        .stdout
+        .take()
+        .expect("service: should open plugin stdout");
     let mut plugin_reader = BufReader::new(plugin_stdout);
 
     let mut ok = true;
