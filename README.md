@@ -23,11 +23,21 @@ As the plugin isn't on the path, the plugin must have an absolute path
 (`./a-plugin`) which means the service must be run from the same folder
 (`target/debug`).
 
+```bash
+cd target/debug
+./a-start
+```
+
 ### Experiment b
 
 This experiment solves the issue in *experiment a* whereby the plugin must have
 an absolute path by discovering the folder of the service and adding it to the
 path.
+
+```bash
+cargo run --bin=b-service --package=b-service
+```
+
 
 ### Experiment c
 
