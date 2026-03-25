@@ -13,7 +13,7 @@ stdin/stdout.
 
 ### Experiment a
 
-The service spawns the plugin in a new process.
+A service spawns a plugin in a new process.
 
 The service receives lines from the terminal, sand sends them to the plugin.
 The plugin reads lines from stdin and echoes them to stdout. The service
