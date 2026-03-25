@@ -15,6 +15,7 @@ fn main() -> io::Result<()> {
 
     loop {
         println!("service: enter CTRL-D to quit");
+
         let Some(line) = read_stdin()? else {
             break;
         };
