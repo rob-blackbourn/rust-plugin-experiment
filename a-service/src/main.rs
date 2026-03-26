@@ -16,7 +16,7 @@ fn main() -> io::Result<()> {
 
         let mut plugin_buffer = String::new();
         plugin.reader.read_line(&mut plugin_buffer)?;
-        println!("service: received: {}", plugin_buffer.trim());
+        println!("service: received: \"{}\"", plugin_buffer.trim());
     }
 
     println!("service: existed normally");
@@ -51,10 +51,12 @@ impl Plugin {
             .stdin
             .take()
             .expect("service: should open plugin stdin");
+
         let stdout = child
             .stdout
             .take()
             .expect("service: should open plugin stdout");
+
         let reader = BufReader::new(stdout);
 
         Self { stdin, reader }
