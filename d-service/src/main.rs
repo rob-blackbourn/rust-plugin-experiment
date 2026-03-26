@@ -16,7 +16,7 @@ fn main() -> io::Result<()> {
 
     add_plugin_path(&args.plugin_path);
 
-    let mut plugin = Plugin::new(args.plugin_cmdline);
+    let mut plugin = Plugin::new(args.plugin_cmdline)?;
 
     let credentials = read_credentials()?;
 
